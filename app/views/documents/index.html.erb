@@ -74,8 +74,10 @@
             
             <div class="d-flex justify-content-between mt-3">
               <%= link_to "Show", document_path(document), class: "btn btn-sm btn-show" %>
-              <%= link_to "Edit", edit_document_path(document), class: "btn btn-sm btn-edit" %>
-              <%= button_to "Delete", document_path(document), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-delete" %>
+              <% if current_user == document.user %>
+                <%= link_to "Edit", edit_document_path(document), class: "btn btn-sm btn-edit" %>
+                <%= button_to "Delete", document_path(document), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-delete" %>
+              <% end %>
             </div>
           </div>
         </div>

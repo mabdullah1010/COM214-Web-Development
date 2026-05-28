@@ -23,8 +23,12 @@
 
         <!-- Edit Document & Write Comment Buttons -->
         <div class="mt-3">
-          <%= link_to "Edit Document", edit_document_path(@document), class: "btn btn-pastel-pink" %>
-          <%= link_to "Write a Comment", new_document_comment_path(@document), class: "btn btn-pastel-green" %>
+          <% if current_user == @document.user %>
+            <%= link_to "Edit Document", edit_document_path(@document), class: "btn btn-pastel-pink" %>
+          <% end %>
+          <% if logged_in? %>
+            <%= link_to "Write a Comment", new_document_comment_path(@document), class: "btn btn-pastel-green" %>
+          <% end %>
         </div>
       </div>
 

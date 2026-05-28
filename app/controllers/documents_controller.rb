@@ -1,6 +1,7 @@
 class DocumentsController < ApplicationController
-  # before_action :authenticate_user!
   before_action :set_document, only: [:show, :edit, :update, :destroy]
+  before_action :require_login, only: [:new, :create, :edit, :update, :destroy]
+  before_action :require_correct_user, only: [:edit, :update, :destroy]
 
   #def index
   #  @documents = Document.where(user: User.first)  #  replace with current_user
@@ -68,11 +69,21 @@ class DocumentsController < ApplicationController
 
 
   def set_document
-    @document = Document.find(params[:id])  # TEMP: current_user.documents.find(...)
+    @document = Document.find(params[:id])
   end
 
-  def current_document
-    @current_document = Document.find_by(id: document_id)
+  def require_login
+    unless logged_in?
+      flash[:danger] = "Please log in"
+      redirect_to login_url
+    end
+  end
+
+  def require_correct_user
+    unless current_user == @document.user
+      flash[:danger] = "Unauthorized"
+      redirect_to root_url
+    end
   end
 
 end

@@ -1,7 +1,6 @@
 source "https://rubygems.org"
 
-ruby "3.4.2"
-
+ruby "3.4.4"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.2.2", ">= 7.2.2.1"
 
@@ -14,9 +13,8 @@ gem 'dotenv-rails', groups: [:development, :test] # Don't use dotenv in producti
 
 
 
-# Use sqlite3 as the database for Active Record
-gem "sqlite3", ">= 1.4"
-gem "aws-sdk-s3", require: false
+gem 'aws-sdk-s3'
+
 gem "image_processing", "~> 1.12"
 gem "bcrypt", "3.1.18" # encrypting password
 
