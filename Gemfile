@@ -7,9 +7,9 @@ gem "rails", "~> 7.2.2", ">= 7.2.2.1"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
-gem 'pg'               # Heroku uses PostgreSQL
-gem 'rails_12factor'   # For asset management and logging (for Rails <6)
-gem 'dotenv-rails', groups: [:development, :test] # Don't use dotenv in production
+gem 'pg'
+gem 'dotenv-rails', groups: [:development, :test]
+gem 'pagy', '~> 9.3'
 
 
 

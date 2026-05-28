@@ -3,23 +3,19 @@ class DocumentsController < ApplicationController
   before_action :require_login, only: [:new, :create, :edit, :update, :destroy]
   before_action :require_correct_user, only: [:edit, :update, :destroy]
 
-  #def index
-  #  @documents = Document.where(user: User.first)  #  replace with current_user
-  #end
-
   def index
-    @documents = Document.all
-  
+    documents = Document.all
+
     if params[:keyword].present?
-      @documents = @documents.where("keywords LIKE ?", "%#{params[:keyword]}%")
+      documents = documents.where("keywords ILIKE ?", "%#{params[:keyword]}%")
     end
-  
+
     if params[:category].present?
-      @documents = @documents.where(category: params[:category])
+      documents = documents.where(category: params[:category])
     end
+
+    @pagy, @documents = pagy(documents)
   end
-  
-  
 
   def new
     @document = Document.new
@@ -31,13 +27,11 @@ class DocumentsController < ApplicationController
     if @document.save
       redirect_to @document, notice: "Document uploaded successfully."
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
   def show
-    @document = Document.find(params[:id])
-    current_document = @document.id
   end
 
   def edit
@@ -45,16 +39,16 @@ class DocumentsController < ApplicationController
 
   def update
     if params[:document][:file].present?
-      @document.file.purge if @document.file.attached?  # remove old file
+      @document.file.purge if @document.file.attached?
     end
-  
+
     if @document.update(document_params)
       redirect_to @document, notice: "Document updated"
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
-  
+
   def destroy
     @document.destroy
     redirect_to documents_path, notice: "Document deleted"
@@ -64,19 +58,10 @@ class DocumentsController < ApplicationController
 
   def document_params
     params.require(:document).permit(:title, :category, :keywords, :file)
-
   end
-
 
   def set_document
     @document = Document.find(params[:id])
-  end
-
-  def require_login
-    unless logged_in?
-      flash[:danger] = "Please log in"
-      redirect_to login_url
-    end
   end
 
   def require_correct_user
@@ -85,5 +70,4 @@ class DocumentsController < ApplicationController
       redirect_to root_url
     end
   end
-
 end

@@ -1,33 +1,27 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, only: %i[ show edit update destroy ]
-  before_action :set_document, only: %i[ new create ]
-  # GET /comments or /comments.json
+  before_action :require_login, only: %i[new create edit update destroy]
+  before_action :set_comment, only: %i[show edit update destroy]
+  before_action :set_document, only: %i[new create]
+  before_action :require_correct_user, only: %i[edit update destroy]
+
   def index
     @comments = Comment.all
   end
 
-
-  # GET /comments/1 or /comments/1.json
   def show
   end
 
-  # GET /comments/new
   def new
     @comment = Comment.new
   end
 
-  # GET /comments/1/edit
   def edit
   end
 
-  # POST /comments or /comments.json
   def create
-
-
     @comment = Comment.new(comment_params)
     @comment.document_id = @document.id
     @comment.user = current_user
-
 
     respond_to do |format|
       if @comment.save
@@ -40,7 +34,6 @@ class CommentsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /comments/1 or /comments/1.json
   def update
     respond_to do |format|
       if @comment.update(comment_params)
@@ -53,29 +46,32 @@ class CommentsController < ApplicationController
     end
   end
 
-  # DELETE /comments/1 or /comments/1.json
   def destroy
     @comment.destroy!
-
     respond_to do |format|
-      format.html { redirect_to comments_path, status: :see_other, notice: "Comment was successfully destroyed." }
+      format.html { redirect_to @comment.document, status: :see_other, notice: "Comment deleted." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_comment
-      @comment = Comment.find(params[:id])
-    end
 
-    def set_document
-      @document = Document.find(params[:document_id])
-    end
+  def set_comment
+    @comment = Comment.find(params[:id])
+  end
 
+  def set_document
+    @document = Document.find(params[:document_id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def comment_params
-      params.require(:comment).permit(:content, :document_id)
+  def comment_params
+    params.require(:comment).permit(:content, :document_id)
+  end
+
+  def require_correct_user
+    unless current_user == @comment.user
+      flash[:danger] = "Unauthorized"
+      redirect_to root_url
     end
+  end
 end
